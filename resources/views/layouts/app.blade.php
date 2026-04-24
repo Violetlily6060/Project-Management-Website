@@ -20,16 +20,6 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    @php
-        $navUser = Auth::guard('admin')->user()
-            ?? Auth::guard('author')->user()
-            ?? Auth::guard('web')->user();
-
-        $navRole = Auth::guard('admin')->check()
-            ? 'Admin'
-            : (Auth::guard('author')->check() ? 'Author' : (Auth::guard('web')->check() ? 'User' : null));
-    @endphp
-
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -43,17 +33,13 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-                        @if ($navUser)
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('activities.index') }}">Activities</a>
-                            </li>
-                        @endif
+
                     </ul>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
                         <!-- Authentication Links -->
-                        @if (!$navUser)
+                        @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -68,7 +54,7 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ $navUser->name }} ({{ $navRole }})
+                                    {{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -83,7 +69,7 @@
                                     </form>
                                 </div>
                             </li>
-                        @endif
+                        @endguest
                     </ul>
                 </div>
             </div>
