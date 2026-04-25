@@ -6,7 +6,12 @@
 <div class="users-container">
 
     <div class="users-header">
-        <h1>Users</h1>
+        <form action="{{ route('users.index') }}" method="GET">
+            <select name="role" onchange="this.form.submit()" class="users-selection">
+                <option value="user" {{ request()->query('role', 'user') === 'user' ? 'selected' : '' }}>User</option>
+                <option value="admin" {{ request()->query('role', 'user') === 'admin' ? 'selected' : '' }}>Admin</option>
+            </select>
+        </form>
         <a href="{{ route('users.create') }}" class="btn-create">+ New User</a>
     </div>
 
@@ -18,7 +23,7 @@
 
     @if($users->isEmpty())
         <div class="empty">
-            No Users Found. <a href="{{ route('userss.create') }}">Create one</a>
+            No {{ request()->query('role', 'user') }}s found. <a href="{{ route('users.create') }}">Create one</a>
         </div>
     @else
         <div class="users-list">

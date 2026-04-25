@@ -15,6 +15,16 @@
     margin: 0;
 }
 
+.users-selection {
+    font-size: 40px;
+    background-color: #fff;
+    border: none;
+}
+
+.users-selection:hover {
+    background-color: #ddd;
+}
+
 .users-list {
     display: flex;
     flex-direction: column;

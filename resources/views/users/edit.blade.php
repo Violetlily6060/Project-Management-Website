@@ -40,6 +40,7 @@
             <input id="email" type="text" name="email" value="{{ old('email', $oUser->email) }}" required placeholder="e.g. bob@example.com">
         </div>
 
+        @if ($user->id != $oUser->id)
         <div class="form-group">
             <label>User Role</label>
             <div class="users-checkboxes">
@@ -53,6 +54,9 @@
                 </div>
             </div>
         </div>
+        @else
+            <input type="radio" name="role" value="{{ $oUser->role }}" checked hidden>
+        @endif
 
         <div class="form-actions">
             <button type="submit" class="btn-submit">Save Changes</button>

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -21,15 +21,30 @@ class UserController extends Controller
 
         Gate::authorize('viewAny', User::class);
 
+        $role = $request->query('role', '');
+
         if ($user->role === 'admin') {
-            $users = User::where('id', '!=', $user->id)
-                ->latest()
-                ->paginate(10);
+            if ($role === 'admin') {
+                $users = User::where([
+                    ['id', '!=', $user->id],
+                    ['role', 'admin']])
+                    ->latest()
+                    ->paginate(10);
+
+                return view('users.index', compact('users'));
+            }
+            else {
+                $users = User::where([
+                    ['id', '!=', $user->id],
+                    ['role', '!=', 'admin']])
+                    ->latest()
+                    ->paginate(10);
+
+                return view('users.index', compact('users'));
+            }
         } else {
             redirect('home');
         }
-
-        return view('users.index', compact('users'));
     }
 
     public function create()
@@ -89,7 +104,7 @@ class UserController extends Controller
 
         Gate::authorize('update', $user);
 
-        return view('users.edit', compact('oUser'));
+        return view('users.edit', compact('oUser', 'user'));
     }
 
     public function update(Request $request, User $oUser)
@@ -118,8 +133,14 @@ class UserController extends Controller
             'role' => $validated['role'],
         ]);
 
-        return redirect()->route('users.index')
-            ->with('success', 'User updated successfully.');
+        if ($oUser->id === $user->id) {
+            return redirect()->route('home')
+                ->with('success', 'User account updated successfully.');
+        }
+        else {
+            return redirect()->route('users.index')
+                ->with('success', 'User updated successfully.');
+        }
     }
 
     public function destroy(User $oUser)
@@ -173,7 +194,7 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        return redirect()->route('users.edit', compact('oUser'))
+        return redirect()->route('users.edit', compact('oUser', 'user'))
             ->with('success', 'User Password updated successfully.');
     }
 }
